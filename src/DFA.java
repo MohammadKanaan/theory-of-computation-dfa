@@ -11,6 +11,8 @@ public class DFA {
 
     private final Q startState;
     private final Set<Q> acceptingStates;
+    // this map contains consists of a key (the current state) and a value (a map of the transitions for that state)
+    // I provided a visualization of this structure
     private final Map<Q, Map<Character, Q>> transitions;
 
     private void addTransition(Q from, char symbol, Q to) {
@@ -90,7 +92,7 @@ public class DFA {
         // Qo has no transitions
     }
 
-
+    // this method reads every character in the string and processes it in the DFA
     public boolean processString(String input) {
         Q currentState = startState;
         System.out.println("Starting at state: " + currentState);
@@ -99,18 +101,23 @@ public class DFA {
             char symbol = input.charAt(i);
             System.out.print("Current state: " + currentState + ", Input: '" + symbol + "' -> ");
 
+            // Check if the current state has transitions for the current symbol
+            // this map contains the transitions for the current state
             Map<Character, Q> stateTransitions = transitions.get(currentState);
 
+            // if there are no transitions for the current state, we send it to the trap state
+            // in the case the input is empty (the input ends on a final state), this won't be a problem since the loop won't run
             if (stateTransitions == null) {
-                System.out.println("No transitions defined for state " + currentState + ". Rejecting.");
+                System.out.println("No transitions defined for state " + currentState);
                 currentState = Q.TRAP;
                 continue;
             }
 
             Q nextState = stateTransitions.get(symbol);
 
+            // if there are no transitions for the chosen symbol, we send it to the trap state
             if (nextState == null) {
-                System.out.println("No transition for symbol '" + symbol + "' from state " + currentState + ". Rejecting.");
+                System.out.println("No transition for symbol '" + symbol + "' from state " + currentState);
                 currentState = Q.TRAP;
                 continue;
             }
